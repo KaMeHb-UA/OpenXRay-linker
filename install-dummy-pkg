@@ -1,0 +1,21 @@
+#!/bin/bash
+cd /tmp
+for i in $@; do
+    mkdir -p dummy/DEBIAN
+    cat > dummy/DEBIAN/control <<EOL
+Section: misc
+Priority: optional
+Standards-Version: 0.0.0
+Package: $i
+Version: 999:999.999.999
+Maintainer: Noone
+Provides: $i
+Architecture: all
+Description: Dummy $i package
+EOL
+    dpkg-deb --build dummy dummy.deb
+
+    dpkg -i ./dummy.deb
+
+    rm -rf dummy.deb dummy
+done
