@@ -1,0 +1,18 @@
+#!/bin/bash
+
+libs_path=(
+    /lib/*-linux-gnu
+    /usr/lib/*-linux-gnu
+)
+
+list_libs(){
+    for p in "${libs_path[@]}"; do
+        ls -d "$p"/*
+    done
+}
+
+all_libs=$(list_libs)
+
+for i in "$@"; do
+    echo "$all_libs" | grep "$i"
+done

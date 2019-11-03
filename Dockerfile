@@ -3,6 +3,7 @@ FROM debian
 ADD AppRun /
 ADD git /
 ADD install-dummy-pkg /
+ADD save-std-lib /
 
 RUN /install-dummy-pkg dbus x11-common sensible-utils libx11-6 libdbus-1-3 && \
     echo 'for i in $@; do \
@@ -15,16 +16,17 @@ RUN /install-dummy-pkg dbus x11-common sensible-utils libx11-6 libdbus-1-3 && \
     chmod 755 /deps && \
     cd / && \
     apt update && \
-    apt autoremove -y && \
+    apt install -y libpcre3 libpulse0 libtinfo6 && \
     /git init && \
     /git add . && \
     /git -c user.name='Me' -c user.email='my@email.org' commit -m 'i' > /dev/null && \
     apt install -y $(/deps) --no-upgrade && \
     /git add . && \
     LC_ALL=C /git status | grep "new file:" | cut -c 14- | xargs /install_lib && \
+    /save-std-lib libpcre libpulsecommon libtinfo | xargs /install_lib && \
     apt remove -y $(/deps) && \
     apt autoremove -y && \
-    rm -rf /var/cache /deps /.git /git /.gitignore /install-dummy-pkg && \
+    rm -rf /var/cache /deps /.git /git /.gitignore /install-dummy-pkg /save-std-lib && \
     echo '#!/bin/sh\n\
         cp -rp /__LIBS_TMP_DIR__/* /xray-16/; \
         cd /xray-16; \
